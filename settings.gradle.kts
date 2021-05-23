@@ -1,2 +1,2 @@
+include(":app")
 rootProject.name = "The Met Museum"
-include ':app'
