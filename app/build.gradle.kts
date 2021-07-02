@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -21,7 +22,10 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -29,11 +33,11 @@ android {
     productFlavors {
         create("dev") {
             applicationIdSuffix = ".dev"
-            setDimension(AppConfig.dimension)
+            dimension(AppConfig.dimension)
         }
 
         create("prod") {
-            setDimension(AppConfig.dimension)
+            dimension(AppConfig.dimension)
         }
     }
 

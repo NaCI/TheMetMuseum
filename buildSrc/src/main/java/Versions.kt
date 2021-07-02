@@ -20,6 +20,7 @@ object Versions {
     const val okhttpLoggingVersion = "4.7.2"
     const val recyclerViewVersion = "1.2.0-alpha04"
     const val retrofitVersion = "2.9.0"
+    const val timberVersion = "4.7.1"
 
     //test
     const val testExtJunit = "1.1.1"
