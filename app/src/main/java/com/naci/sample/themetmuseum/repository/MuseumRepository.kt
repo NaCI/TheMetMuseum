@@ -9,4 +9,6 @@ interface MuseumRepository {
     fun getObjects(): Flow<Resource<ObjectsResponse>>
 
     fun getObjectInfo(id: Int): Flow<Resource<ObjectInfo>>
+
+    fun getObjectInfoWithDelay(id: Int, delayInMillis: Long): Flow<Resource<ObjectInfo>>
 }

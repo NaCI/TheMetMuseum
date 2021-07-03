@@ -8,6 +8,7 @@ import com.naci.sample.themetmuseum.data.model.ObjectInfo
 import com.naci.sample.themetmuseum.data.model.response.ObjectsResponse
 import com.naci.sample.themetmuseum.data.serviceRequestFlow
 import com.naci.sample.themetmuseum.data.serviceRequestTransformFlow
+import com.naci.sample.themetmuseum.data.serviceRequestTransformFlowForTest
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -27,6 +28,16 @@ class MuseumRepositoryImp @Inject constructor(
             }, transform = { objectInfoResponse ->
                 ObjectInfoResponseToDomainObjectInfo().map(objectInfoResponse)
             }
+        )
+    }
+
+    override fun getObjectInfoWithDelay(id: Int, delayInMillis: Long): Flow<Resource<ObjectInfo>> {
+        return serviceRequestTransformFlowForTest(
+            suspendFun = {
+                metMuseumService.objectInfo(id)
+            }, transform = { objectInfoResponse ->
+                ObjectInfoResponseToDomainObjectInfo().map(objectInfoResponse)
+            }, delayInMillis = delayInMillis
         )
     }
 

@@ -37,6 +37,27 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun getObjectInfoWithDelay(
+        id: Int,
+        delayInMillis: Long
+    ) {
+        viewModelScope.launch {
+            museumRepository.getObjectInfoWithDelay(id, delayInMillis).collect { resource ->
+                if (resource is Resource.Loading) {
+                    if (resource.isLoading) {
+                        increaseInProgressCount()
+                    } else {
+                        decreaseInProgressCount()
+                    }
+                } else if (resource is Resource.Success) {
+                    _uiState.value = handleNewObject(resource)
+                } else if (resource is Resource.Error) {
+                    _uiState.value = resource
+                }
+            }
+        }
+    }
+
     fun getObjectInfo(
         id: Int
     ) {

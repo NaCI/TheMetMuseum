@@ -31,6 +31,8 @@ object AppDependencies {
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutinesVersion}"
     const val hilt = "com.google.dagger:hilt-android:${Versions.hiltVersion}"
     const val timber = "com.jakewharton.timber:timber:${Versions.timberVersion}"
+    const val swipeRefreshLayout =
+        "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefreshLayoutVersion}"
 
     // Android Test libraries
     const val coreTesting = "androidx.arch.core:core-testing:${Versions.coreTestingVersion}"
@@ -56,6 +58,7 @@ object AppDependencies {
         add(coreKtx)
         add(appCompat)
         add(constraintLayout)
+        add(swipeRefreshLayout)
         add(fragmentKtx)
         add(lifecycleCommon)
         add(lifecycleViewModel)

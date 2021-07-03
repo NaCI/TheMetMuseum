@@ -1,5 +1,6 @@
 package com.naci.sample.themetmuseum.data
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import retrofit2.HttpException
 import java.net.SocketException
@@ -53,6 +54,57 @@ fun <T> serviceRequestFlow(
                 message = e.message.toString()
             )
             emitError(apiError, modifyFun)
+        }
+    }.onStart {
+        emit(Resource.Loading(true))
+    }.onCompletion {
+        emit(Resource.Loading(false))
+    }
+}
+
+fun <T, R> serviceRequestTransformFlowForTest(
+    suspendFun: suspend () -> T,
+    transform: ((T) -> R),
+    delayInMillis: Long = 0
+): Flow<Resource<R>> {
+    return flow {
+        try {
+            val result = suspendFun()
+            if (delayInMillis > 0) {
+                delay(delayInMillis)
+            }
+            val transformed = transform(result)
+            emit(Resource.Success(transformed))
+        } catch (httpE: HttpException) {
+            val apiError = ApiError(
+                code = httpE.code(),
+                message = httpE.message()
+            )
+            emit(Resource.Error(apiError))
+        } catch (unknownHostE: UnknownHostException) {
+            val apiError = ApiError(
+                code = -101,
+                message = unknownHostE.message.toString()
+            )
+            emit(Resource.Error(apiError))
+        } catch (socketE: SocketException) {
+            val apiError = ApiError(
+                code = -102,
+                message = socketE.message.toString()
+            )
+            emit(Resource.Error(apiError))
+        } catch (socketTimeoutE: SocketTimeoutException) {
+            val apiError = ApiError(
+                code = -103,
+                message = socketTimeoutE.message.toString()
+            )
+            emit(Resource.Error(apiError))
+        } catch (e: Exception) {
+            val apiError = ApiError(
+                code = -100,
+                message = e.message.toString()
+            )
+            emit(Resource.Error(apiError))
         }
     }.onStart {
         emit(Resource.Loading(true))
