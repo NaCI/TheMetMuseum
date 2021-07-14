@@ -7,7 +7,9 @@ import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.naci.sample.themetmuseum.R
 import com.naci.sample.themetmuseum.common.BaseFragment
@@ -16,6 +18,7 @@ import com.naci.sample.themetmuseum.databinding.FragmentObjectListBinding
 import com.naci.sample.themetmuseum.util.viewbindingdelegation.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -53,7 +56,7 @@ class MainFragment : BaseFragment(R.layout.fragment_object_list) {
     }
 
     private fun getMuseumObjects() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getObjectInfoWithDelay(2, 5000)
             for (i in (1..19)) {
                 viewModel.getObjectInfo((1..10000).random())
@@ -71,24 +74,28 @@ class MainFragment : BaseFragment(R.layout.fragment_object_list) {
     }
 
     private fun setupObservers() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.progressState.collect { isLoading ->
-                binding.progressLoading.visibility = if (isLoading) VISIBLE else GONE
-            }
-        }
-        lifecycleScope.launchWhenStarted {
-            viewModel.uiState.collect { uiState ->
-                when (uiState) {
-                    is Resource.Success -> {
-                        Timber.d("Success ${uiState.data}")
-                        listAdapter.submitList(uiState.data)
-                        //TODO: get rid of that notifyDataSetChanged - it is used for swipe refresh functionality
-                        listAdapter.notifyDataSetChanged()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.progressState.collect { isLoading ->
+                        binding.progressLoading.visibility = if (isLoading) VISIBLE else GONE
                     }
-                    is Resource.Error -> {
-                        Timber.e("Error ${uiState.apiError}")
-                    }
-                    else -> {
+                }
+                launch {
+                    viewModel.uiState.collect { uiState ->
+                        when (uiState) {
+                            is Resource.Success -> {
+                                Timber.d("Success ${uiState.data}")
+                                listAdapter.submitList(uiState.data)
+                                //TODO: get rid of that notifyDataSetChanged - it is used for swipe refresh functionality
+                                listAdapter.notifyDataSetChanged()
+                            }
+                            is Resource.Error -> {
+                                Timber.e("Error ${uiState.apiError}")
+                            }
+                            else -> {
+                            }
+                        }
                     }
                 }
             }

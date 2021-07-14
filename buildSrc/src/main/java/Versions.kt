@@ -14,7 +14,7 @@ object Versions {
     const val hiltVersion = "2.35"
     const val ktlintVersion = "0.38.1"
     const val ktxVersion = "1.2.0"
-    const val lifecycleVersion = "2.2.0"
+    const val lifecycleVersion = "2.4.0-alpha02"
     const val materialVersion = "1.2.0"
     const val navigationVersion = "2.3.3"
     const val okhttpLoggingVersion = "4.7.2"
