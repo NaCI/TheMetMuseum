@@ -101,10 +101,4 @@ class MainFragment : BaseFragment(R.layout.fragment_object_list) {
             }
         }
     }
-
-    override fun onDestroyView() {
-        binding.swipeRefreshLayout.setOnRefreshListener(null)
-        super.onDestroyView()
-    }
-
 }
